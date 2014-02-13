@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Jquery Facebook Login</title>
+    <script type="text/javascript">
+        /*      Facebook Login         */
+        (function(d){
+         var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         ref.parentNode.insertBefore(js, ref);
+        }(document));
+
+        // Additional JS functions here
+        window.fbAsyncInit = function() {
+            FB.init({
+              appId      : 'XXXXXXXXXXXXXXXX', //Change the app id with your application app id
+              channelUrl : '', // Channel file for x-domain comms
+              status     : true, // check login status
+              cookie     : true, // enable cookies to allow the server to access the session
+              oauth      : true,
+              xfbml      : true,  // parse XFBML
+              frictionlessRequests : true
+            });
+        };    
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        /*
+         * Facebook login button Event
+         */
+        $( document ).ready(function() {
+          $("#fb-login").click(function() {
+            FB.getLoginStatus(function(userloginstatus) {
+              console.log("FB.getLoginStatus Response");
+              console.log(userloginstatus);
+                  if (userloginstatus.status === 'connected') {
+                    FBfetchUserDetail(userloginstatus); // connected
+                } 
+                else if (userloginstatus.status === 'not_authorized') {
+                    FBUserlogin(); // not_authorized
+                } 
+                else {
+                    FBUserlogin(); // not_logged_in
+                }
+            });          
+          });          
+        });
+
+        function FBUserlogin()
+        {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    // connected
+                    console.log('User Already logged in');
+                    console.log('login function connected response');
+                    console.log(response);
+                    FBfetchUserDetail(response);
+                } else {
+                    // cancelled
+                    console.log('login function cancelled response');
+                    console.log(response);
+                }
+            }, {scope: 'email,publish_actions'});
+        }
+
+        function FBfetchUserDetail(userloginstatus)
+        {
+            FB.api('/me', function(userdetail) {
+                console.log('User userloginstatus ');
+                console.log(userloginstatus);
+                console.log('User details ');
+                console.log(userdetail);
+                //User detail is the json object of the facebook user.you can use that information as per your need
+            });
+        }
+    </script>    
+	<body>	
+		<div id="fb-root"></div>
+		<input type="button" id="fb-login" value="Facebook login"/>
+	</body>
+</html>
